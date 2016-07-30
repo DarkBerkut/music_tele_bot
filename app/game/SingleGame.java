@@ -121,7 +121,9 @@ public class SingleGame {
         try {
             Process p = Runtime.getRuntime().exec("python3 /home/bot/python/parse_response.py", null, new File("/home/bot/python"));
             PrintWriter out = new PrintWriter(p.getOutputStream());
-            Scanner in = new Scanner(p.getInputStream(), "\t");
+            Scanner in = new Scanner(p.getInputStream());
+
+            in.useDelimiter("\t");
 
             out.print(songs.get(currentSong).name + "\t" + (authorSuccess ? 1 : 0) + "\t" + (trackSuccess ? 1 : 0) + "\t" + s + "\t");
             out.flush();
