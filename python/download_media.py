@@ -7,7 +7,7 @@ def download_and_cut_song(song_name, begin=0, end=15*1000):
     with open("data/music/full/{}".format(song_name), 'wb') as file:
         file.write(r.content)
     song = AudioSegment.from_mp3("data/music/full/{}".format(song_name))
-    cut_song = song[begin:end]
+    cut_song = song[len(song)/2:len(song)/2 + end]
     cut_song.export("data/music/cut/cut_{}".format(song_name), format='mp3')
 
 
