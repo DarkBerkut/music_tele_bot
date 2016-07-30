@@ -36,7 +36,7 @@ public class SingleGame {
 
     private void startQuestion() {
         chat.sendMessage("Question " + (currentSong + 1) + " out of " + songs.size());
-        chat.sendMusic(songs.get(currentSong).filePath);
+        chat.sendMusic(songs.get(currentSong).filePath, "Song #" + (currentSong + 1));
         inQuestion = true;
 
         gameTimer.schedule(new TimerTask() {

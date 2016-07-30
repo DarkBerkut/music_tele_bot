@@ -22,8 +22,8 @@ public class BotImpl implements Bot {
     }
 
     @Override
-    public void sendMusic(String filePath) {
-        telegramApi.sendMusic(chatId, filePath);
+    public void sendMusic(String filePath, String title) {
+        telegramApi.sendMusic(chatId, filePath, title);
     }
 
     @Override

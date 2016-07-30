@@ -7,7 +7,7 @@ public interface Bot {
 
     public void sendMessage(String text);
 
-    public void sendMusic(String filePath);
+    public void sendMusic(String filePath, String s);
 
     public void finishGame();
 }
