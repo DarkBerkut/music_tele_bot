@@ -1,6 +1,7 @@
 package game;
 
 import bot.Chat;
+import play.api.Logger$;
 
 import java.io.File;
 import java.io.IOException;
@@ -113,6 +114,10 @@ public class SingleGame {
         return result;
     }
 
+    private void log(String s) {
+        Logger$.MODULE$.info(() -> s);
+    }
+
     public void processMessage(User u, String s) {
         if (!inQuestion) {
             return;
@@ -127,12 +132,12 @@ public class SingleGame {
 
             out.print(songs.get(currentSong).name + "\t" + (authorSuccess ? 1 : 0) + "\t" + (trackSuccess ? 1 : 0) + "\t" + s + "\t");
             out.flush();
-
+            log("printing completed");
             boolean author = in.nextInt() == 1;
             boolean track = in.nextInt() == 1;
             String result = in.next();
             String spoiler = in.next();
-
+            log("scanning completed");
             in.close();
             out.close();
 
@@ -143,7 +148,6 @@ public class SingleGame {
             chat.sendMessage("Author " + (authorSuccess ? "done" : "not done") + ", track " + (trackSuccess ? "done" : "not done") + ".");
 
             chat.sendMessage("SPOILER " + spoiler);
-
 
 
             if (authorSuccess && trackSuccess)
