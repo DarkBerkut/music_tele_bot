@@ -8,8 +8,6 @@ import java.util.TimerTask;
  * Created by krotkov on 7/30/2016.
  */
 public class SingleGame {
-
-
     private Bot chat;
 
     private boolean inQuestion;
@@ -53,6 +51,7 @@ public class SingleGame {
         currentSong++;
         if (currentSong == songs.size()) {
             finishGame();
+            return;
         }
 
         scheduleStartQuestion();
@@ -85,7 +84,7 @@ public class SingleGame {
         if (!inQuestion) {
             return;
         }
-        if (s.equals(songs.get(currentSong))) {
+        if (s.equals(songs.get(currentSong).name)) {
             chat.sendMessage("Correct, " + u.firstName + "!");
             gameTimer.cancel();
             finishQuestion();
