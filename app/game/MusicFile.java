@@ -10,6 +10,14 @@ public class MusicFile {
         this.filePath = filePath;
     }
 
+    @Override
+    public String toString() {
+        return "MusicFile{" +
+                "name='" + name + '\'' +
+                ", filePath='" + filePath + '\'' +
+                '}';
+    }
+
     String name;
     String filePath;
 }

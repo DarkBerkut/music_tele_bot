@@ -2,6 +2,8 @@ package game;
 
 import bot.Chat;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -9,7 +11,6 @@ import java.util.*;
  */
 public class SingleGame {
     private Chat chat;
-
 
     private Map<User, Integer> results;
     private boolean inQuestion;
@@ -38,7 +39,7 @@ public class SingleGame {
 
     private void startQuestion() {
         chat.sendMessage("Question " + (currentSong + 1) + " out of " + songs.size());
-        chat.sendMusic(songs.get(currentSong).filePath, "Song #" + (currentSong + 1));
+        chat.sendMusic("/home/bot/python/data/music/cut/cut_" + songs.get(currentSong).filePath, "Song #" + (currentSong + 1));
         inQuestion = true;
 
         gameTimer.schedule(new TimerTask() {
@@ -71,12 +72,12 @@ public class SingleGame {
     }
 
     private void startGame() {
-        songs = generateSongs();
         currentSong = 0;
         inQuestion = false;
 
-        chat.sendMessage("Starting the game!");
-
+        chat.sendMessage("Preparing the game, please wait...");
+        songs = generateSongs();
+        chat.sendMessage("Songs prepared! The game will begin soon.");
         scheduleStartQuestion();
     }
 
@@ -88,9 +89,17 @@ public class SingleGame {
 
     private ArrayList<MusicFile> generateSongs() {
         ArrayList<MusicFile> result = new ArrayList<>();
-        result.add(new MusicFile("a", "/home/bot/mp3/a.mp3"));
-        result.add(new MusicFile("b", "/home/bot/mp3/a.mp3"));
 
+        try {
+            Process p = Runtime.getRuntime().exec("python3 /home/bot/python/parse_request.py", null, new File("/home/bot/python"));
+            Scanner s = new Scanner(p.getInputStream());
+            for (int i = 0; i < 5; i++) {
+                result.add(new MusicFile(s.next(), s.next()));
+            }
+            chat.sendMessage(result.get(result.size() - 1).toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return result;
     }
 
