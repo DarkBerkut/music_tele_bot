@@ -10,7 +10,7 @@ public class Controller {
 
     private Map<Long, SingleGame> games;
 
-    Controller() {
+    public Controller() {
         games = new HashMap<>();
     }
 
