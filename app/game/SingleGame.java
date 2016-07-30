@@ -89,6 +89,7 @@ public class SingleGame {
 
     private ArrayList<MusicFile> generateSongs() {
         ArrayList<MusicFile> result = new ArrayList<>();
+        String spoiler = "";
 
         try {
             Process p = Runtime.getRuntime().exec("python3 /home/bot/python/parse_request.py", null, new File("/home/bot/python"));
@@ -96,10 +97,11 @@ public class SingleGame {
             for (int i = 0; i < 5; i++) {
                 result.add(new MusicFile(s.next(), s.next()));
             }
-            chat.sendMessage(result.get(result.size() - 1).toString());
+            spoiler = spoiler + result.get(result.size() - 1).toString() + "\n";
         } catch (IOException e) {
             e.printStackTrace();
         }
+        chat.sendMessage("SPOILER\n" + spoiler);
         return result;
     }
 
