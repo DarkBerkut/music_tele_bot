@@ -1,3 +1,4 @@
 python-Levenshtein
 requests
 pydub
+pymystem3
