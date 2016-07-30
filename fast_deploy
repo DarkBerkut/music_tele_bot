@@ -1,0 +1,5 @@
+sbt dist
+scp /Users/berkut/projects/MusicBot/target/scala-2.11/musicbot_2.11-1.0-sans-externalized.jar bot@musicbot:/home/bot/musicbot-1.0/lib/
+ssh bot@musicbot <<'ENDSSH'
+./fast_restart.sh
+ENDSSH
