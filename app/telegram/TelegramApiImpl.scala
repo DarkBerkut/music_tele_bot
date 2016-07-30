@@ -15,8 +15,8 @@ class TelegramApiImpl(api: TelegramApiAkka)(implicit ec: ExecutionContext) exten
     }
   }
 
-  override def sendMusic(chatId: Long, filepath: String): Future[Unit] = {
-    api.request(SendAudio(Left(chatId), Left(FromFile(new File(filepath))))).map {
+  override def sendMusic(chatId: Long, filepath: String, title : String): Future[Unit] = {
+    api.request(SendAudio(Left(chatId), Left(FromFile(new File(filepath))), title = Option(title))).map {
       m => Logger.info(s"Got response for $chatId, audio: $filepath. $m")
     }
   }
