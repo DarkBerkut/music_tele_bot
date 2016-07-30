@@ -19,11 +19,12 @@ class WebHookController @Inject()(configuration: play.api.Configuration) extends
 
   import Marshalling._
 
-  run()
-
   def webHook = Action.async { request =>
+    Logger.info("Body is: " + request.body)
     Logger.info("Webhook from telegram " + request)
-    val httpRequest = HttpRequest(HttpMethods.POST, entity = HttpEntity(ContentTypes.`application/json`, request.body.asText.get))
+    request.body
+    val json = request.body.asJson.get.toString()
+    val httpRequest = HttpRequest(HttpMethods.POST, entity = HttpEntity(ContentTypes.`application/json`, json))
     Unmarshal(httpRequest).to[Update].map(handleUpdate).map(_ => Ok(""))
   }
 
