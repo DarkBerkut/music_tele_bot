@@ -20,8 +20,6 @@ class WebHookController @Inject()(configuration: play.api.Configuration) extends
 
   def webHook = Action.async { request =>
     Logger.info("Body is: " + request.body)
-    Logger.info("Webhook from telegram " + request)
-    request.body
     val json = request.body.asJson.get.toString()
     val httpRequest = HttpRequest(HttpMethods.POST, entity = HttpEntity(ContentTypes.`application/json`, json))
     Unmarshal(httpRequest).to[Update].map(handleUpdate).map(_ => Ok(""))

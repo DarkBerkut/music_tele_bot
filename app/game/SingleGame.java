@@ -1,5 +1,7 @@
 package game;
 
+import bot.Bot;
+
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
