@@ -1,6 +1,14 @@
 import fileinput
 import sys
+from common import normalize_name
 from parse_request import try_get_song_from_db
+
+# def match(query, target):
+#     query = normalize_name(query)
+#     query_parts = query.split()
+#     target_parts = target.parts()
+#     matched = 0
+#
 
 
 def get_track(track_id):
@@ -8,7 +16,11 @@ def get_track(track_id):
     return track.artists[0].aliases, track.track_name_aliases, []
 
 def is_response_correct(track_artist_aliases, track_name_aliases, query_text):
-    return any([query_text == alias for alias in  track_artist_aliases]), any(query_text == alias for alias in track_name_aliases)
+    is_artist_good = any(
+        [query_text == alias for alias in track_artist_aliases]
+    )
+    is_track_good = any(query_text == alias for alias in track_name_aliases)
+    return is_artist_good, is_track_good
 
 
 def get_reaction(query_text, similar_artists):
@@ -28,4 +40,4 @@ if __name__ == "__main__":
         if not artist_correct and not track_name_correct:
             reaction = get_reaction(query_text, similar_artists)
 
-        print(artist_correct, track_name_correct, reaction)
+        print(int(artist_correct), int(track_name_correct), reaction)
