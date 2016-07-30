@@ -10,14 +10,14 @@ import java.util.TimerTask;
 public class SingleGame {
 
 
-    private Chat chat;
+    private Bot chat;
 
     private boolean inQuestion;
     private ArrayList<MusicFile> songs;
     private int currentSong;
     private Timer gameTimer;
 
-    public SingleGame(Chat chat) {
+    public SingleGame(Bot chat) {
         this.chat = chat;
         this.gameTimer = new Timer();
 
@@ -74,7 +74,11 @@ public class SingleGame {
     }
 
     private ArrayList<MusicFile> generateSongs() {
-        return new ArrayList<>();
+        ArrayList<MusicFile> result = new ArrayList<>();
+        result.add(new MusicFile("a", "/home/bot/mp3/a.mp3"));
+
+        return result;
+
     }
 
     public void processMessage(User u, String s) {
