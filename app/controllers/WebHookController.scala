@@ -30,18 +30,5 @@ class WebHookController @Inject()(configuration: play.api.Configuration) extends
   override def token: String = configuration.underlying.getString("telegram.auth")
 
   override def run(): Unit = {
-    val host = configuration.underlying.getString("host.name")
-    val method = routes.WebHookController.webHook().url
-    val port = System.getProperty("https.port")
-    val hookUrl = s"https://$host:$port$method"
-    Logger.info(s"Setting webhook to $hookUrl")
-    val cert = getClass.getResourceAsStream("/music_bot_public.pem")
-    val certContent = scala.io.Source.fromInputStream(cert).getLines().mkString("\n")
-    FromByteString("music_bot_public.pem", ByteString(certContent))
-    api.request(SetWebhook(Some(hookUrl))) onComplete {
-      case Success(true) => Logger.info("Successfully registered webhook")
-      case Success(false) => Logger.error("Can not register webhook")
-      case Failure(e) => Logger.error("Exception while regestering webhook", e)
-    }
   }
 }
