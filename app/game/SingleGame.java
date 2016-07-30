@@ -44,6 +44,8 @@ public class SingleGame {
         chat.sendMusic("/home/bot/python/data/music/cut/cut_" + songs.get(currentSong).filePath, "Song #" + (currentSong + 1));
         inQuestion = true;
 
+        gameTimer.cancel();
+        gameTimer = new Timer();
         gameTimer.schedule(new TimerTask() {
             @Override
             public void run() {
