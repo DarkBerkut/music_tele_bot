@@ -2,7 +2,7 @@ package game
 
 import java.util.concurrent.ConcurrentHashMap
 
-import bot.BotImpl
+import bot.ChatImpl
 import telegram.TelegramApi
 
 import scala.concurrent.Future
@@ -24,7 +24,7 @@ class Controller(api: TelegramApi) {
   }
 
   def startGame(chatId: Long) {
-    games.put(chatId, new SingleGame(new BotImpl(chatId, this, api)))
+    games.put(chatId, new SingleGame(new ChatImpl(chatId, this, api)))
   }
 
   def finishGame(chatId: Long) {

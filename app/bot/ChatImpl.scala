@@ -4,7 +4,7 @@ import telegram.TelegramApi
 
 import scala.concurrent.Future
 
-class BotImpl(chatId: Long, controller: Controller, api: TelegramApi) extends Bot {
+class ChatImpl(chatId: Long, controller: Controller, api: TelegramApi) extends Chat {
 
   override def sendMessage(text: String): Future[Unit] = {
     api.sendText(chatId, text)

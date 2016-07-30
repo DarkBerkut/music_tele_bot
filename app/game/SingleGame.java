@@ -1,6 +1,6 @@
 package game;
 
-import bot.Bot;
+import bot.Chat;
 
 import java.util.*;
 
@@ -8,7 +8,7 @@ import java.util.*;
  * Created by krotkov on 7/30/2016.
  */
 public class SingleGame {
-    private Bot chat;
+    private Chat chat;
 
 
     private Map<User, Integer> results;
@@ -17,7 +17,7 @@ public class SingleGame {
     private int currentSong;
     private Timer gameTimer;
 
-    public SingleGame(Bot chat) {
+    public SingleGame(Chat chat) {
         this.chat = chat;
         this.gameTimer = new Timer();
         this.results = new HashMap<>();
