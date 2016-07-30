@@ -19,7 +19,7 @@ class Track():
         self.track_filename = track_filename
 
     def to_json(self):
-        return json.dump(self.__dict__, ensure_ascii=False)
+        return json.dumps(self.__dict__, ensure_ascii=False)
 
     @classmethod
     def from_json(cls, track_json):
