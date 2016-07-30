@@ -12,14 +12,14 @@ class Controller(api: TelegramApi) {
   private val games = new ConcurrentHashMap[Long, SingleGame]()
 
   def processMessage(chatId: Long, user: User, text: String): Future[Unit] = {
-    if (text == "start" && !games.containsKey(chatId)) {
-      startGame(chatId)
-      return Future.successful(())
+    Option(games.get(chatId)) match {
+      case Some(game) =>
+        game.processMessage(user, text)
+      case None =>
+        if (text == "start") {
+          startGame(chatId)
+        }
     }
-    if (!games.containsKey(chatId)) {
-      return Future.successful(())
-    }
-    games.get(chatId).processMessage(user, text)
     Future.successful(())
   }
 
