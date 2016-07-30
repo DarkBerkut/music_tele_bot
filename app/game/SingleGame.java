@@ -1,5 +1,6 @@
 package game;
 
+import java.util.*;
 import bot.Bot;
 
 import java.util.ArrayList;
@@ -12,6 +13,8 @@ import java.util.TimerTask;
 public class SingleGame {
     private Bot chat;
 
+
+    private Map<User, Integer> results;
     private boolean inQuestion;
     private ArrayList<MusicFile> songs;
     private int currentSong;
@@ -20,8 +23,10 @@ public class SingleGame {
     public SingleGame(Bot chat) {
         this.chat = chat;
         this.gameTimer = new Timer();
+        this.results = new HashMap<>();
 
         startGame();
+
     }
 
     private void scheduleStartQuestion() {
@@ -59,6 +64,14 @@ public class SingleGame {
         scheduleStartQuestion();
     }
 
+    private void printResults() {
+        String resultsToPrint = "";
+        for (User u : results.keySet()) {
+            resultsToPrint = resultsToPrint + u.firstName + " " + results.get(u) + "\n";
+        }
+        chat.sendMessage(resultsToPrint);
+    }
+
     private void startGame() {
         songs = generateSongs();
         currentSong = 0;
@@ -80,7 +93,6 @@ public class SingleGame {
         result.add(new MusicFile("b", "/home/bot/mp3/a.mp3"));
 
         return result;
-
     }
 
     public void processMessage(User u, String s) {
@@ -90,9 +102,11 @@ public class SingleGame {
         if (s.equals(songs.get(currentSong).name)) {
             chat.sendMessage("Correct, " + u.firstName + "!");
             gameTimer.cancel();
+            results.put(u, results.getOrDefault(u, 0) + 10);
             finishQuestion();
         } else {
             chat.sendMessage("Incorrect, " + u.firstName + "!");
+            results.put(u, results.getOrDefault(u, 0) - 2);
         }
     }
 }
