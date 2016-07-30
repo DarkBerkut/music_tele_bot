@@ -10,20 +10,21 @@ def generate_aliases():
 
 
 class Track():
-    def __init__(self, id, artists, track_name, track_name_aliases):
+    def __init__(self, id, artists, track_name, track_name_aliases, track_filename):
         self.id = id
         self.artists = artists
         self.track_name = track_name
         self.track_name_aliases = track_name_aliases
+        self.track_filename = track_filename
 
 
 class Artist():
-    def __init__(self, name, aliases, type, related, photo, album, track_filename):
+    def __init__(self, id, name, aliases, type, related, photo, best_tracks):
+        self.id = id
         self.name = name
         self.aliases = aliases
         self.type = type
         self.related = related
         self.photo = photo
-        self.album = album
-        self.track_filename = track_filename
+        self.best_tracks = best_tracks
 
