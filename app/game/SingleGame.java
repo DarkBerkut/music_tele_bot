@@ -53,6 +53,7 @@ public class SingleGame {
         chat.sendMessage("Question is finished.");
         inQuestion = false;
         currentSong++;
+        printResults();
         if (currentSong == songs.size()) {
             finishGame();
             return;
