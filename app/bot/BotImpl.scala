@@ -10,8 +10,8 @@ class BotImpl(chatId: Long, controller: Controller, api: TelegramApi) extends Bo
     api.sendText(chatId, text)
   }
 
-  override def sendMusic(filePath: String): Future[Unit] = {
-    api.sendMusic(chatId, filePath)
+  override def sendMusic(filePath: String, title: String): Future[Unit] = {
+    api.sendMusic(chatId, filePath, title)
   }
 
   override def finishGame(): Future[Unit] = Future.successful {
