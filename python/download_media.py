@@ -16,6 +16,6 @@ def download_photo(photo_name):
     with open("data/photo/{}".format(photo_name), 'wb') as file:
         file.write(r.content)
 
-if __name__ == "__main__":
-    download_and_cut_song('wuyexyc1lzmo.mp3')
-    download_photo("iwbfg69nl60u.jpg")
+# if __name__ == "__main__":
+#     download_and_cut_song('wuyexyc1lzmo.mp3')
+#     download_photo("iwbfg69nl60u.jpg")

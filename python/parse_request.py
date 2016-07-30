@@ -1,3 +1,8 @@
+import logging
+import sys
+from download_media import download_and_cut_song
+
+logging.basicConfig(level=logging.DEBUG, stream=sys.stderr)
 import csv
 import json
 import os
@@ -5,7 +10,7 @@ import requests
 import time
 from common import Artist, Track, get_conn, normalize_name
 
-SIMILAR_ARTISTS_DEFAULT_SIZE = 5
+SIMILAR_ARTISTS_DEFAULT_SIZE = 2
 
 API_ROOT = "http://muzis.ru/api/"
 MUSICBRAINS_API_ROOT = "http://musicbrainz.org/ws/2/"
@@ -13,9 +18,14 @@ LAST_FM = "http://ws.audioscrobbler.com/2.0/"
 
 FROM_VALUES_API = API_ROOT + "stream_from_values.api"
 SIMILAR_PERFORMANCES_API = API_ROOT + "similar_performers.api"
+SONGS_BY_PERFORMER = API_ROOT + "get_songs_by_performer.api"
 
-artists = {}
-tracks = {}
+artists_cache = {
+
+}
+tracks_cache = {
+
+}
 
 def file_to_dict(file):
     return {row[1].lower(): row[0] for row in csv.reader(open(file))}
@@ -37,7 +47,7 @@ def get_indexes(input_str, categ_dict):
 
 def get_muzis_songs(indxs):
     values = ','.join(['{}:100'.format(i) for i in indxs])
-    data = {'values': values, 'size': 20, 'operator': 'AND'}
+    data = {'values': values, 'size': 5, 'operator': 'AND'}
     r = requests.post(FROM_VALUES_API, data=data)
     return r.json()['songs']
 
@@ -54,7 +64,7 @@ def get_musicbrainz_api_response(name):
         if code != 200:
             time.sleep(0.5)
     artist = r.json()["artists"][0]
-    type = artist["type"]
+    type = artist.get("type", "Person")
     aliases = [alias["name"] for alias in artist.get("aliases", [])]
     return type, aliases
 
@@ -69,8 +79,12 @@ def get_last_fm_api_response(name):
     return best_tracks
 
 def make_artist(id, name, photo, related_names):
+    logging.debug("last.fm api: {}:{}".format(id, name))
     best_tracks = get_last_fm_api_response(name)
+    logging.debug("Done")
+    logging.debug("musicbrainz api: {}:{}".format(id, name))
     type, aliases = get_musicbrainz_api_response(name)
+    logging.debug("done")
     return Artist(id,
                   name,
                   generate_normalized_aliases(name, aliases, type),
@@ -79,33 +93,101 @@ def make_artist(id, name, photo, related_names):
 
 
 def get_similar_artists(artist_id):
-    r = requests.post(SIMILAR_PERFORMANCES_API,
+    logging.debug("Similar query")
+    r = requests.post(SONGS_BY_PERFORMER,
                       data={"performer_id": artist_id,
                             'size': SIMILAR_ARTISTS_DEFAULT_SIZE}
     )
-    performers = r.json()['performers'][0]
-    return make_artist(performers['id'], performers['title'], performers['poster'], [])  # TODO similar
+    logging.debug("Done")
+    songs = r.json()["songs"]
+    song_with_artist_info = None
+    for song in songs:
+        if song["performer_id"] == artist_id:
+            song_with_artist_info = song
+            break
+    if not song_with_artist_info:
+        logging.error("PERFORMER NOT FOUND FOR {}".format(artist_id))
+    return make_artist(song_with_artist_info['performer_id'], song_with_artist_info['performer'], song_with_artist_info['poster'], [])  # TODO similar
 
 
 def make_track_name_aliases(param):
     return normalize_name(param)
 
 
+def try_get_artists_from_db(artists):
+    if not artists:
+        return [], []
+
+    result = []
+    remains = []
+    for artist in artists:
+        if artist in artists_cache:
+            result.append(artists_cache[artist])
+        else:
+            remains.append(artist)
+    if remains:
+        result_set = get_conn().cursor().execute("""
+        SELECT ArtistInfo FROM Artists Where Id in (%s)
+        """ % ",".join(["?" for _ in remains]), remains)
+        rows = result_set.fetchall()
+        for artist_json, in rows:
+            artist_obj = Artist.from_json(artist_json)
+            artists_cache[artist_obj.id] = artist_obj
+            result.append(artist_obj)
+        remains = [art for art in remains if not artists_cache.get(art)]
+    return result, remains
+
+def try_get_song_from_db(song_id):
+    if song_id in tracks_cache:
+        return tracks_cache[song_id]
+    result_set = get_conn().cursor().execute("""
+    SELECT TrackInfo FROM Tracks Where Id = ?
+    """, [song_id])
+    row = result_set.fetchone()
+    if row:
+        json_obj,  = row
+        track = Track.from_json(json_obj)
+        artists, remains = try_get_artists_from_db(track.artists)
+        if remains:
+            remain_artists = [get_similar_artists(artist_id) for artist_id in remains]
+            put_artists_to_db(remain_artists)
+            artists.extend(remain_artists)
+            remains.clear()
+        assert (not remains)
+        track.artists = artists
+        tracks_cache[track.id] = track
+        return track
+
+
 def make_track_from_song(song):
     song_id = song['id']
-    artists = song['performers']
-    real_artists = [get_similar_artists(artist_id) for artist_id in artists]
-    return Track(song_id, real_artists,
-          song["track_name"],
-          make_track_name_aliases(song["track_name"]), song["file_mp3"])
+    logging.debug("Current song: {}".format(song_id))
+    track = try_get_song_from_db(song_id)
+    if track:
+        logging.debug("Found in db: {}:{}".format(track.artists[0].name, track.track_name))
+        return track
+    else:
+        artists = song['performers']
+        real_artists, remains = try_get_artists_from_db(artists)
+        if remains:
+            remains_ = [get_similar_artists(artist_id) for artist_id in remains]
+            real_artists.extend(remains_)
+        new_track = Track(song_id, real_artists, song["track_name"], make_track_name_aliases(song["track_name"]), song["file_mp3"])
+        download_and_cut_song(song["file_mp3"])
+        logging.debug("Track Done")
+        put_track_to_db(new_track)
+        return new_track
 
 def put_artists_to_db(artists):
+    artists = [artist for artist in artists if artist.id not in artists_cache]
     data = [(artist.id, artist.to_json()) for artist in artists]
     conn = get_conn()
     conn.executemany("""
         INSERT INTO Artists VALUES (?, ?)
     """, data)
     conn.commit()
+    for artist in artists:
+        artists_cache[artist.id] = artist
 
 def put_track_to_db(track):
     put_artists_to_db(track.artists)
@@ -116,6 +198,7 @@ def put_track_to_db(track):
         INSERT INTO Tracks VALUES (?, ?)
     """, (id, track_json))
     conn.commit()
+    tracks_cache[track.id] = track
 
 def main():
     # global input_str, file_to_dict, categ_dict, indxs, songs, result, song, track, i
@@ -124,11 +207,11 @@ def main():
     indxs = get_indexes(input_str, categ_dict)
     songs = get_muzis_songs(indxs)
     result = []
+    logging.debug("Loaded songs: {}".format([song['id'] for song in songs]))
     for song in songs:
         track = make_track_from_song(song)
-        put_track_to_db(track)
-        result.append(track.id)
-    result = ' '.join([str(i) for i in result])
+        result.append(track)
+    result = '\n'.join(["{}\t{}".format(track.id, track.track_filename) for track in result])
     print(result)
 
 
