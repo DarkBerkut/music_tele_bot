@@ -7,11 +7,14 @@ import info.mukel.telegrambot4s.api.{Marshalling, TelegramBot}
 import info.mukel.telegrambot4s.models.{Message, Update, User}
 import play.api.Logger
 import play.api.mvc.{Action, Controller}
+import telegram.TelegramApiImpl
 
 class WebHookController @Inject()(configuration: play.api.Configuration) extends Controller
   with TelegramBot {
 
-  val controller = new game.Controller()
+  override implicit val ec = system.dispatcher
+
+  val controller = new game.Controller(new TelegramApiImpl(api))
 
   import Marshalling._
 

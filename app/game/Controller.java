@@ -1,5 +1,7 @@
 package game;
 
+import telegram.TelegramApi;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,9 +10,12 @@ import java.util.Map;
  */
 public class Controller {
 
+    private TelegramApi telegramApi;
+
     private Map<Long, SingleGame> games;
 
-    public Controller() {
+    public Controller(TelegramApi telegramApi) {
+        this.telegramApi = telegramApi;
         games = new HashMap<>();
     }
 
@@ -28,7 +33,7 @@ public class Controller {
     }
 
     public void startGame(long chatId) {
-        games.put(chatId, new SingleGame(new BotImpl(chatId, this)));
+        games.put(chatId, new SingleGame(new BotImpl(chatId, this, telegramApi)));
     }
 
     public void finishGame(long chatId) {
