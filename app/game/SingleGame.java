@@ -96,8 +96,8 @@ public class SingleGame {
             Scanner s = new Scanner(p.getInputStream());
             for (int i = 0; i < 5; i++) {
                 result.add(new MusicFile(s.next(), s.next()));
+                spoiler = spoiler + result.get(result.size() - 1).toString() + "\n";
             }
-            spoiler = spoiler + result.get(result.size() - 1).toString() + "\n";
         } catch (IOException e) {
             e.printStackTrace();
         }
