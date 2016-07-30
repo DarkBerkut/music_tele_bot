@@ -70,7 +70,7 @@ def get_musicbrainz_api_response(name):
 
 
 def generate_normalized_aliases(name, aliases, type):
-    pass
+    return [normalize_name(name)] + [normalize_name(alias) for alias in aliases]
 
 
 def get_last_fm_api_response(name):
@@ -111,7 +111,7 @@ def get_similar_artists(artist_id):
 
 
 def make_track_name_aliases(param):
-    return normalize_name(param)
+    return [normalize_name(param)]
 
 
 def try_get_artists_from_db(artists):
