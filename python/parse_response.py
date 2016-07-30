@@ -36,8 +36,10 @@ if __name__ == "__main__":
             int(track_id)
         )
         artist_correct, track_name_correct = is_response_correct(track_artist_aliases, track_name_aliases, query_text)
-        reaction = None
+        reaction = "Cool!"
         if not artist_correct and not track_name_correct:
             reaction = get_reaction(query_text, similar_artists)
 
-        print(int(artist_correct), int(track_name_correct), reaction)
+        spoilers = "{};{} ".format(",".join(track_artist_aliases), ",".join(track_name_aliases))
+
+        print("{}\t{}\t{}\t{}".format(int(artist_correct), int(track_name_correct), reaction, spoilers))
