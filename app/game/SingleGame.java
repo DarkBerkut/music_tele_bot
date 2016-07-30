@@ -75,6 +75,7 @@ public class SingleGame {
     private ArrayList<MusicFile> generateSongs() {
         ArrayList<MusicFile> result = new ArrayList<>();
         result.add(new MusicFile("a", "/home/bot/mp3/a.mp3"));
+        result.add(new MusicFile("b", "/home/bot/mp3/a.mp3"));
 
         return result;
 

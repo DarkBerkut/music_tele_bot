@@ -1,14 +1,20 @@
 import sqlite3
+from common import get_conn
+
 __author__ = 'jambo'
 
-db_filename = "data/tracks.db"
-conn = sqlite3.connect(db_filename)
-
-cur = conn.cursor()
-cur.execute("""
+conn = get_conn()
+conn.execute("""
 CREATE TABLE Tracks
  (
  id integer PRIMARY KEY,
  TrackInfo text
  )
+""")
+conn.execute("""
+CREATE TABLE Artists
+(
+  id integer PRIMARY KEY,
+  ArtistInfo text
+)
 """)

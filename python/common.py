@@ -5,6 +5,17 @@ import json
 def normalize_name(string):
     return " ".join("".join([ch if ch.isalpha() or ch.isdigit() else " " for ch in string.lower()]).split())
 
+from Levenshtein import distance as lev_distance
+import sqlite3
+
+conn = None
+def get_conn():
+    global conn
+    if conn:
+        return conn
+    db_filename = "data/tracks.db"
+    conn = sqlite3.connect(db_filename)
+    return conn
 
 def generate_aliases():
     pass
