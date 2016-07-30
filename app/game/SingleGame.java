@@ -5,6 +5,13 @@ package game;
  */
 public class SingleGame {
 
+    private Chat chat;
+
+    public SingleGame(Chat chat) {
+        this.chat = chat;
+
+    }
+
     public void processMessage(User u, String s) {
 
     }

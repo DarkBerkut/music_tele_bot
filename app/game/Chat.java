@@ -7,4 +7,5 @@ public interface Chat {
 
     public void sendMessage(String text);
 
+    public void sendMusic(String filePath);
 }
