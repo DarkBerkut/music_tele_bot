@@ -1,9 +1,11 @@
 package game;
 
 import bot.Chat;
+import play.api.Logger$;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.*;
 
 /**
@@ -14,6 +16,7 @@ public class SingleGame {
 
     private Map<User, Integer> results;
     private boolean inQuestion;
+    private boolean authorSuccess, trackSuccess;
     private ArrayList<MusicFile> songs;
     private int currentSong;
     private Timer gameTimer;
@@ -43,6 +46,8 @@ public class SingleGame {
         chat.sendMessage("Question " + (currentSong + 1) + " out of " + songs.size());
         chat.sendMusic("/home/bot/python/data/music/cut/cut_" + songs.get(currentSong).filePath, "Song #" + (currentSong + 1));
         inQuestion = true;
+        authorSuccess = false;
+        trackSuccess = false;
 
         gameTimer.cancel();
         gameTimer = new Timer();
@@ -109,17 +114,55 @@ public class SingleGame {
         return result;
     }
 
+    private void log(String s) {
+        Logger$.MODULE$.info(() -> s);
+    }
+
     public void processMessage(User u, String s) {
         if (!inQuestion) {
             return;
         }
-        if (s.equals(songs.get(currentSong).name)) {
+
+        try {
+            Process p = Runtime.getRuntime().exec("python3 /home/bot/python/parse_response.py", null, new File("/home/bot/python"));
+            PrintWriter out = new PrintWriter(p.getOutputStream());
+            Scanner in = new Scanner(p.getInputStream());
+
+            in.useDelimiter("\t");
+
+            out.print(songs.get(currentSong).name + "\t" + (authorSuccess ? 1 : 0) + "\t" + (trackSuccess ? 1 : 0) + "\t" + s + "\t");
+            out.flush();
+            log("printing completed");
+            boolean author = in.nextInt() == 1;
+            boolean track = in.nextInt() == 1;
+            String result = in.next();
+            String spoiler = in.next();
+            log("scanning completed");
+            in.close();
+            out.close();
+
+            authorSuccess |= author;
+            trackSuccess |= track;
+
+            chat.sendMessage(result);
+            chat.sendMessage("Author " + (authorSuccess ? "done" : "not done") + ", track " + (trackSuccess ? "done" : "not done") + ".");
+
+            chat.sendMessage("SPOILER " + spoiler);
+
+
+            if (authorSuccess && trackSuccess)
+                finishQuestion();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        /*if (s.equals(songs.get(currentSong).name)) {
             chat.sendMessage("Correct, " + u.firstName + "!");
             results.put(u, results.getOrDefault(u, 0) + 10);
             finishQuestion();
         } else {
             chat.sendMessage("Incorrect, " + u.firstName + "!");
             results.put(u, results.getOrDefault(u, 0) - 2);
-        }
+        }*/
     }
 }
