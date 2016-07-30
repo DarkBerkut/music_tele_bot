@@ -133,6 +133,9 @@ public class SingleGame {
             String result = in.next();
             String spoiler = in.next();
 
+            in.close();
+            out.close();
+
             authorSuccess |= author;
             trackSuccess |= track;
 
@@ -140,6 +143,8 @@ public class SingleGame {
             chat.sendMessage("Author " + (authorSuccess ? "done" : "not done") + ", track " + (trackSuccess ? "done" : "not done") + ".");
 
             chat.sendMessage("SPOILER " + spoiler);
+
+
 
             if (authorSuccess && trackSuccess)
                 finishQuestion();
