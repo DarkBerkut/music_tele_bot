@@ -6,7 +6,7 @@ input_str = input()
 
 
 def file_to_dict(file):
-    return {row[1]: row[0] for row in csv.reader(open(file))}
+    return {row[1].lower(): row[0] for row in csv.reader(open(file))}
 
 categories = [i.strip() for i in input_str.split(',')]
 indxs = []
@@ -14,7 +14,7 @@ indxs = []
 for category in categories:
     for file in ['data/style.csv', 'data/theme.csv', 'data/time.csv', 'data/language.csv', 'data/tempo.csv']:
         categ_dict = file_to_dict(file)
-        ind = categ_dict.get(category)
+        ind = categ_dict.get(category.lower())
         if ind:
             indxs.append(ind)
 
