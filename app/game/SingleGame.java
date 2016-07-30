@@ -28,6 +28,8 @@ public class SingleGame {
     }
 
     private void scheduleStartQuestion() {
+        gameTimer.cancel();
+        gameTimer = new Timer();
         gameTimer.schedule(new TimerTask() {
 
             @Override
