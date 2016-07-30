@@ -1,11 +1,8 @@
 package game;
 
-import java.util.*;
 import bot.Bot;
 
-import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 /**
  * Created by krotkov on 7/30/2016.
@@ -84,6 +81,7 @@ public class SingleGame {
 
     private void finishGame() {
         chat.sendMessage("Game is finished");
+        gameTimer.cancel();
         chat.finishGame();
     }
 
@@ -101,7 +99,6 @@ public class SingleGame {
         }
         if (s.equals(songs.get(currentSong).name)) {
             chat.sendMessage("Correct, " + u.firstName + "!");
-            gameTimer.cancel();
             results.put(u, results.getOrDefault(u, 0) + 10);
             finishQuestion();
         } else {
