@@ -87,7 +87,11 @@ def get_last_fm_api_response(name):
     r = requests.get(LAST_FM,
                      params=dict(method="artist.gettoptracks", artist=name, api_key="eb7e02525703c69c761d0a17ca11923c",
                                  format="json"))
-    best_tracks = [t["name"] for t in r.json()["toptracks"]["track"][:3]]
+    try:
+        best_tracks = [t["name"] for t in r.json()["toptracks"]["track"][:3]]
+    except KeyError:
+        logging.exception("Best tracks")
+        return []
     return best_tracks
 
 
@@ -112,14 +116,17 @@ def get_similar_artists(artist_id):
                             'size': SIMILAR_ARTISTS_DEFAULT_SIZE}
                       )
     logging.debug("Done")
-    songs = r.json()["songs"]
-    song_with_artist_info = None
-    for song in songs:
-        if song["performer_id"] == artist_id:
-            song_with_artist_info = song
-            break
-    if not song_with_artist_info:
-        logging.error("PERFORMER NOT FOUND FOR {}".format(artist_id))
+    try:
+        songs = r.json()["songs"]
+        song_with_artist_info = None
+        for song in songs:
+            if song["performer_id"] == artist_id:
+                song_with_artist_info = song
+                break
+        if not song_with_artist_info:
+            logging.error("PERFORMER NOT FOUND FOR {}".format(artist_id))
+    except:
+        return None
     return make_artist(song_with_artist_info['performer_id'], song_with_artist_info['performer'],
                        song_with_artist_info['poster'], [])  # TODO similar
 
@@ -165,6 +172,9 @@ def try_get_song_from_db(song_id):
         artists, remains = try_get_artists_from_db(track.artists)
         if remains:
             remain_artists = [get_similar_artists(artist_id) for artist_id in remains]
+            for artist in remain_artists:
+                if not artist:
+                    return None
             put_artists_to_db(remain_artists)
             artists.extend(remain_artists)
             remains.clear()
@@ -186,6 +196,9 @@ def make_track_from_song(song):
         real_artists, remains = try_get_artists_from_db(artists)
         if remains:
             remains_ = [get_similar_artists(artist_id) for artist_id in remains]
+            for artist_ in remains_:
+                if not artist_:
+                    return None
             real_artists.extend(remains_)
         new_track = Track(song_id, real_artists, song["track_name"], make_track_name_aliases(song["track_name"]),
                           song["file_mp3"])
@@ -221,7 +234,7 @@ def put_track_to_db(track):
 
 def main():
     # global input_str, file_to_dict, categ_dict, indxs, songs, result, song, track, i
-    input_str = "Русский, пляжная"  # input()
+    input_str = input()
     categ_dict = get_categories()
     indxs = get_indexes(input_str, categ_dict)
     songs = get_muzis_songs(indxs)
@@ -229,7 +242,10 @@ def main():
     logging.debug("Loaded songs: {}".format([song['id'] for song in songs]))
     for song in songs:
         track = make_track_from_song(song)
-        result.append(track)
+        if track is None:
+            logging.error("couldn't make a song {}".format(song['id']))
+        else:
+            result.append(track)
     result = '\n'.join(["{}\t{}".format(track.id, track.track_filename) for track in result])
     print(result)
 
