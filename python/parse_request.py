@@ -261,7 +261,7 @@ def put_artists_to_db(artists):
     data = [(artist.id, artist.to_json()) for artist in artists]
     conn = get_conn()
     conn.executemany("""
-        INSERT INTO Artists VALUES (?, ?)
+        INSERT OR IGNORE INTO Artists VALUES (?, ?)
     """, data)
     conn.commit()
     for artist in artists:
@@ -274,7 +274,7 @@ def put_track_to_db(track):
     id, track_json = track.id, track.to_json()
     conn = get_conn()
     conn.execute("""
-        INSERT INTO Tracks VALUES (?, ?)
+        INSERT OR IGNORE INTO Tracks VALUES (?, ?)
     """, (id, track_json))
     conn.commit()
     tracks_cache[track.id] = track
