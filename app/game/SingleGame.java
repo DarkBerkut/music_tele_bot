@@ -142,8 +142,11 @@ public class SingleGame {
             out.flush();
             log("printing completed");
             boolean author = in.nextInt() == 1;
+            log("first number");
             boolean track = in.nextInt() == 1;
+            log("second number");
             String result = in.next();
+            log("third number");
             String spoiler = in.next();
             log("scanning completed");
             in.close();
