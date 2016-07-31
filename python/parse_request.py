@@ -141,7 +141,11 @@ def make_artist(id, name, photo, related_names):
     best_tracks = get_last_fm_api_response(name)
     logging.debug("Done")
     logging.debug("musicbrainz api: {}:{}".format(id, name))
-    type, aliases = get_musicbrainz_api_response(name)
+    try:
+        type, aliases = get_musicbrainz_api_response(name)
+    except:
+        logging.exception("musicbrains")
+        type, aliases = "Person", ""
     if photo:
         download_media.download_photo(photo)
     logging.debug("done")
@@ -283,8 +287,10 @@ def main():
     indxs = list(set(get_indexes(input_str, tree_dict)))
     if indxs:
         print("OK\tСоздаю игру по следующему набору тем: {}".format(", ".join([id_to_type_dict[i] for i in indxs])))
+        sys.stdout.flush()
     else:
-        print("UNK\t{}".format("Я не смог понять тему игры. Попробуйте следующие варианты темы: «start русский рок», «start американский хип-хоп 80-х» "))
+        print("UNK\t{}".format("Я не смог понять тему игры. Попробуйте следующие варианты темы: «start русский рок», «start американский хип-хоп 80-х»"))
+        sys.stdout.flush()
         return
     songs = get_muzis_songs(indxs)
     result = []
