@@ -242,8 +242,8 @@ public class SingleGame {
 
             chat.sendMessage(u.firstName + " " + (score > 0 ? "+" : "") + score +  (score >= 0 ? " очков" : " очка") + "\n" +
                     result + "\n" +
-                    "Автор " + (authorSuccess ? "отгадан" : "не отгадан") + ", название " + (trackSuccess ? "отгадано" : "не отгадано") + "." + "\n" +
-                    "SPOILER " + spoiler);
+                    "Автор " + (authorSuccess ? "отгадан" : "не отгадан") + ", название " + (trackSuccess ? "отгадано" : "не отгадано") + "." );/*+ "\n" +
+                    "SPOILER " + spoiler);*/
 
             results.put(u, results.getOrDefault(u, 0) + score);
 
