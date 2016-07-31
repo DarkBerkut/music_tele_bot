@@ -94,7 +94,7 @@ public class SingleGame {
 
                 System.err.println(type + " " + content + " LOADED");
                 if (type.equals("IMG")) {
-                    imageHint = content;
+                    imageHint = content.substring(1);
                 }
 
                 if (type.equals("TEXT"))
