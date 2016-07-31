@@ -146,9 +146,6 @@ public class SingleGame {
             in.close();
             out.close();
 
-            authorSuccess |= author;
-            trackSuccess |= track;
-
             int score = 0;
             if (!authorSuccess && author) {
                 score += 5;
@@ -159,6 +156,9 @@ public class SingleGame {
 
             if (score == 0)
                 score -= 2;
+
+            authorSuccess |= author;
+            trackSuccess |= track;
 
             chat.sendMessage(u.firstName + " счет " + score + "\n" +
                     result + "\n" +
