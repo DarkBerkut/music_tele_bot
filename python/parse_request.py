@@ -283,15 +283,22 @@ def put_track_to_db(track):
 def main():
     # global input_str, file_to_dict, categ_dict, indxs, songs, result, song, track, i
     input_str = input()
-    categ_dict, id_to_type_dict, tree_dict = get_categories()
-    indxs = list(set(get_indexes(input_str, tree_dict)))
-    if indxs:
-        print("OK\tСоздаю игру по следующему набору тем: {}".format(", ".join([id_to_type_dict[i] for i in indxs])))
-        sys.stdout.flush()
+    if input_str == "demo":
+        songs = [1521, 19386, 35413]
+        print("OK\tСоздаю демо игру")
     else:
-        print("UNK\t{}".format("Я не смог понять тему игры. Попробуйте следующие варианты темы: «start русский рок», «start американский хип-хоп 80-х»"))
-        sys.stdout.flush()
-        return
+        # 35413 эминем рэп гад
+        # 19386 никалаев/выпьем за любовь/пять причин
+        # 1521 кукушка кино
+        categ_dict, id_to_type_dict, tree_dict = get_categories()
+        indxs = list(set(get_indexes(input_str, tree_dict)))
+        if indxs:
+            print("OK\tСоздаю игру по следующему набору тем: {}".format(", ".join([id_to_type_dict[i] for i in indxs])))
+            sys.stdout.flush()
+        else:
+            print("UNK\t{}".format("Я не смог понять тему игры. Попробуйте следующие варианты темы: «start русский рок», «start американский хип-хоп 80-х»"))
+            sys.stdout.flush()
+            return
     songs = get_muzis_songs(indxs)
     result = []
     logging.debug("Loaded songs: {}".format([song['id'] for song in songs]))

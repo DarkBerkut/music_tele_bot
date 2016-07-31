@@ -1,4 +1,5 @@
 import fileinput
+import random
 import sys
 from common import normalize_name, lev_distance
 from parse_request import try_get_song_from_db
@@ -10,6 +11,14 @@ from transliteration import check
 #
 # ru_pc = r"йцукенгшщзхъфывапролджэячсмитьбю"
 # en_pc = r"qwertyuiopasdfghjklzxcvbnm"
+REACTIONS = [
+    "Не то",
+    "В следующий раз угадаешь :)",
+    "Неверно",
+    "Попробуй еще, не угадал",
+    "Не угадал"
+]
+
 
 def match(query_parts, target):
     target_parts = target.split()
@@ -37,7 +46,7 @@ def is_response_correct(track_artist_aliases, track_name_aliases, query_text):
 
 
 def get_reaction(query_text, similar_artists):
-    return "Ты плох и никогда не угадаешь этот трек"
+    return REACTIONS[random.randint(0, len(REACTIONS) - 1)]
 
 
 if __name__ == "__main__":
