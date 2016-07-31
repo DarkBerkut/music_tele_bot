@@ -22,6 +22,7 @@ public class SingleGame {
     private Timer hintTimer;
     String imageHint;
     String songsHint;
+    String answer;
 
     public SingleGame(Chat chat, String cats) throws GameNotStartedException {
         this.chat = chat;
@@ -56,6 +57,7 @@ public class SingleGame {
         trackSuccess = false;
         imageHint = null;
         songsHint = null;
+        answer = "";
 
         gameTimer.cancel();
         gameTimer = new Timer();
@@ -95,6 +97,10 @@ public class SingleGame {
                 System.err.println(type + " " + content + " LOADED");
                 if (type.equals("IMG")) {
                     imageHint = content.substring(1);
+                }
+
+                if (type.equals("ANS")) {
+                    answer = content.substring(1);
                 }
 
                 if (type.equals("TEXT"))
@@ -144,7 +150,7 @@ public class SingleGame {
     }
 
     private void printResults() {
-        String resultsToPrint = "Текущие результаты\n";
+        String resultsToPrint = answer + "\n" + "Текущие результаты\n";
         for (User u : results.keySet()) {
             resultsToPrint = resultsToPrint + u.firstName + " " + results.get(u) + "\n";
         }
