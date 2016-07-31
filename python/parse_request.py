@@ -224,7 +224,6 @@ def main():
     input_str = "Русский, пляжная"  # input()
     categ_dict = get_categories()
     indxs = get_indexes(input_str, categ_dict)
-    print(indxs)
     songs = get_muzis_songs(indxs)
     result = []
     logging.debug("Loaded songs: {}".format([song['id'] for song in songs]))
