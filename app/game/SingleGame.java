@@ -108,6 +108,9 @@ public class SingleGame {
             for (int i = 0; i < 5; i++) {
                 result.add(new MusicFile(s.next(), s.next()));
                 spoiler = spoiler + result.get(result.size() - 1).toString() + "\n";
+                if (!s.hasNext()) {
+                    break;
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
