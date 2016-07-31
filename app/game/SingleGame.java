@@ -80,17 +80,18 @@ public class SingleGame {
 
     private void loadHints() {
         try {
-            System.err.println("Trying to load hints");
+            System.err.println("Trying to load hints for song " + songs.get(currentSong));
             Process p = Runtime.getRuntime().exec("python3 /home/bot/python/show_hint.py", null, new File("/home/bot/python"));
             Scanner in = new Scanner(p.getInputStream());
             PrintWriter out = new PrintWriter(p.getOutputStream());
 
             out.println(songs.get(currentSong).name + "\n");
             out.flush();
-            in.useDelimiter("\t\n");
+            in.useDelimiter("\t");
             while (in.hasNext()) {
                 String type = in.next();
-                String content = in.next();
+                String content = in.nextLine();
+
                 System.err.println(type + " " + content + " LOADED");
                 if (type.equals("IMG")) {
                     imageHint = content;
