@@ -28,6 +28,9 @@ class Controller(api: TelegramApi) {
       games.put(chatId, new SingleGame(new ChatImpl(chatId, this, api), cats))
     } catch {
       case e: GameNotStartedException => {}
+      case e: Exception => {
+        api.sendText(chatId, "Что-то пошло не так, не удалось создать игру.")
+      }
     }
   }
 
