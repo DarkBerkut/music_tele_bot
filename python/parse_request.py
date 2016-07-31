@@ -80,7 +80,12 @@ def get_musicbrainz_api_response(name):
 
 
 def generate_normalized_aliases(name, aliases, type):
-    return [normalize_name(name)] + [normalize_name(alias) for alias in aliases]
+    aliases = [normalize_name(name)] + [normalize_name(alias) for alias in aliases]
+    if type == "Person":
+        aliases.extend(
+            [alias.split()[-1] for alias in aliases]
+        )
+    return list(set(aliases))
 
 
 def get_last_fm_api_response(name):
