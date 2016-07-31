@@ -1,7 +1,7 @@
 git pull
 sbt dist
-scp target/scala-2.11/musicbot_2.11-1.0-sans-externalized.jar bot@musicbot:/home/bot/musicbot-1.0/lib/musicbot.musicbot-1.0-sans-externalized.jar
-scp -r python/* bot@musicbot:python
-ssh bot@musicbot <<'ENDSSH'
+scp target/scala-2.11/musicbot_2.11-1.0-sans-externalized.jar bot@13.74.155.3:/home/bot/musicbot-1.0/lib/musicbot.musicbot-1.0-sans-externalized.jar
+scp -r python/* bot@13.74.155.3:python
+ssh bot@13.74.155.3 <<'ENDSSH'
 ./fast_restart.sh
 ENDSSH
