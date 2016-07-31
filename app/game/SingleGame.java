@@ -62,7 +62,7 @@ public class SingleGame {
 //        chat.sendMessage("Question is finished.");
         inQuestion = false;
         currentSong++;
-        //printResults();
+        printResults();
         if (currentSong == songs.size()) {
             finishGame();
             return;
@@ -72,7 +72,7 @@ public class SingleGame {
     }
 
     private void printResults() {
-        String resultsToPrint = "";
+        String resultsToPrint = "Current statistics\n";
         for (User u : results.keySet()) {
             resultsToPrint = resultsToPrint + u.firstName + " " + results.get(u) + "\n";
         }
@@ -149,10 +149,23 @@ public class SingleGame {
             authorSuccess |= author;
             trackSuccess |= track;
 
-            chat.sendMessage(result + "\n" +
+            int score = 0;
+            if (!authorSuccess && author) {
+                score += 5;
+            }
+            if (!trackSuccess && track) {
+                score += 5;
+            }
+
+            if (score == 0)
+                score -= 2;
+
+            chat.sendMessage(u.firstName + " счет " + score + "\n" +
+                    result + "\n" +
                     "Author " + (authorSuccess ? "done" : "not done") + ", track " + (trackSuccess ? "done" : "not done") + "." + "\n" +
                     "SPOILER " + spoiler);
 
+            results.put(u, results.getOrDefault(u, 0) + score);
 
             if (authorSuccess && trackSuccess)
                 finishQuestion();
