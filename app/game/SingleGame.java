@@ -42,7 +42,7 @@ public class SingleGame {
     }
 
     private void startQuestion() {
-        chat.sendMessage("Question " + (currentSong + 1) + " out of " + songs.size());
+//        chat.sendMessage("Question " + (currentSong + 1) + " out of " + songs.size());
         chat.sendMusic("/home/bot/python/data/music/cut/cut_" + songs.get(currentSong).filePath, "Song #" + (currentSong + 1));
         inQuestion = true;
         authorSuccess = false;
@@ -59,7 +59,7 @@ public class SingleGame {
     }
 
     private void finishQuestion() {
-        chat.sendMessage("Question is finished.");
+//        chat.sendMessage("Question is finished.");
         inQuestion = false;
         currentSong++;
         //printResults();
