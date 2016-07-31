@@ -27,7 +27,11 @@ class Controller(api: TelegramApi) {
 
   def startGame(chatId: Long, cats: String) {
     System.err.println("game started");
-    games.put(chatId, new SingleGame(new ChatImpl(chatId, this, api), cats))
+    try {
+      games.put(chatId, new SingleGame(new ChatImpl(chatId, this, api), cats))
+    } catch (GameNotStartedException e) {
+
+    }
   }
 
   def finishGame(chatId: Long) {
