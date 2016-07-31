@@ -107,6 +107,7 @@ public class SingleGame {
     }
 
     private void showImageHint() {
+        System.err.println("Trying to show image hint");
         if (imageHint != null && !authorSuccess) {
             chat.sendImage("/home/bot/python/data/photo/" + imageHint);
         }
