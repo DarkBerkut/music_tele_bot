@@ -14,8 +14,10 @@ class Controller(api: TelegramApi) {
   def processMessage(chatId: Long, user: User, text: String): Future[Unit] = {
     Option(games.get(chatId)) match {
       case Some(game) =>
+        System.err.println("Game already exists")
         game.processMessage(user, text)
       case None =>
+        System.err.println("Game doesn't exist")
         if (text.startsWith("start")) {
           startGame(chatId, text.substring(6))
         }
