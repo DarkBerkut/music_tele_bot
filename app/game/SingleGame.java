@@ -82,7 +82,6 @@ public class SingleGame {
         currentSong = 0;
         inQuestion = false;
 
-        chat.sendMessage("Игра загружается, осталось совсем немного...");
         songs = generateSongs(cats);
         if (songs == null) {
             chat.finishGame();
@@ -114,7 +113,7 @@ public class SingleGame {
                 chat.sendMessage(comment);
                 return null;
             }
-            chat.sendMessage(comment);
+            chat.sendMessage(comment + "\n" + "Игра загружается, осталось совсем немного...");
             for (int i = 0; i < 5; i++) {
                 result.add(new MusicFile(s.next(), s.next()));
                 spoiler = spoiler + result.get(result.size() - 1).toString() + "\n";
