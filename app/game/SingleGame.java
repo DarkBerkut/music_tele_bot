@@ -38,7 +38,7 @@ public class SingleGame {
             public void run() {
                 startQuestion();
             }
-        }, 5 * 1000);
+        }, 1 * 1000);
     }
 
     private void startQuestion() {
@@ -59,7 +59,6 @@ public class SingleGame {
     }
 
     private void finishQuestion() {
-//        chat.sendMessage("Question is finished.");
         inQuestion = false;
         currentSong++;
         printResults();
@@ -72,7 +71,7 @@ public class SingleGame {
     }
 
     private void printResults() {
-        String resultsToPrint = "Current statistics\n";
+        String resultsToPrint = "Текущие реультаты\n";
         for (User u : results.keySet()) {
             resultsToPrint = resultsToPrint + u.firstName + " " + results.get(u) + "\n";
         }
@@ -83,14 +82,14 @@ public class SingleGame {
         currentSong = 0;
         inQuestion = false;
 
-        chat.sendMessage("Preparing the game, please wait...");
+        chat.sendMessage("Игра загружается, осталось совсем немного...");
         songs = generateSongs(cats);
-        chat.sendMessage("Songs prepared! The game will begin soon.");
+        chat.sendMessage("Игра готова!");
         scheduleStartQuestion();
     }
 
     private void finishGame() {
-        chat.sendMessage("Game is finished");
+        chat.sendMessage("Игра окончена!");
         gameTimer.cancel();
         chat.finishGame();
     }
@@ -117,7 +116,6 @@ public class SingleGame {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        chat.sendMessage("SPOILER\n" + spoiler);
         return result;
     }
 
@@ -154,15 +152,15 @@ public class SingleGame {
                 score += 5;
             }
 
-            if (score == 0)
+            if (score == 0 && !author && !track)
                 score -= 2;
 
             authorSuccess |= author;
             trackSuccess |= track;
 
-            chat.sendMessage(u.firstName + " счет " + score + "\n" +
+            chat.sendMessage(u.firstName + " " + (score > 0 ? "+" : "") + score +  (score >= 0 ? "очков" : "очка") + "\n" +
                     result + "\n" +
-                    "Author " + (authorSuccess ? "done" : "not done") + ", track " + (trackSuccess ? "done" : "not done") + "." + "\n" +
+                    "Автор " + (authorSuccess ? "отгадан" : "не отгадан") + ", название " + (trackSuccess ? "отгадано" : "не отгадано") + "." + "\n" +
                     "SPOILER " + spoiler);
 
             results.put(u, results.getOrDefault(u, 0) + score);
@@ -173,13 +171,5 @@ public class SingleGame {
             e.printStackTrace();
         }
 
-        /*if (s.equals(songs.get(currentSong).name)) {
-            chat.sendMessage("Correct, " + u.firstName + "!");
-            results.put(u, results.getOrDefault(u, 0) + 10);
-            finishQuestion();
-        } else {
-            chat.sendMessage("Incorrect, " + u.firstName + "!");
-            results.put(u, results.getOrDefault(u, 0) - 2);
-        }*/
     }
 }
