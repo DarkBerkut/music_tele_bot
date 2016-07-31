@@ -24,10 +24,12 @@ class Controller(api: TelegramApi) {
   }
 
   def startGame(chatId: Long, cats: String) {
+    System.err.println("game started");
     games.put(chatId, new SingleGame(new ChatImpl(chatId, this, api), cats))
   }
 
   def finishGame(chatId: Long) {
+    System.err.println("finishing game in Controller");
     games.remove(chatId)
   }
 

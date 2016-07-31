@@ -84,6 +84,7 @@ public class SingleGame {
 
         songs = generateSongs(cats);
         if (songs == null) {
+            System.err.println("finishing game in SingleGame");
             chat.finishGame();
             return;
         }
