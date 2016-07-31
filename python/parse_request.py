@@ -141,7 +141,11 @@ def make_artist(id, name, photo, related_names):
     best_tracks = get_last_fm_api_response(name)
     logging.debug("Done")
     logging.debug("musicbrainz api: {}:{}".format(id, name))
-    type, aliases = get_musicbrainz_api_response(name)
+    try:
+        type, aliases = get_musicbrainz_api_response(name)
+    except:
+        logging.exception("musicbrains")
+        type, aliases = "Person", ""
     if photo:
         download_media.download_photo(photo)
     logging.debug("done")
