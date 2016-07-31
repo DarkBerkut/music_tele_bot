@@ -1,7 +1,6 @@
 package game;
 
 import bot.Chat;
-import play.api.Logger$;
 
 import java.io.File;
 import java.io.IOException;
@@ -115,7 +114,7 @@ public class SingleGame {
     }
 
     private void log(String s) {
-        Logger$.MODULE$.info(() -> s);
+        System.err.println(s);
     }
 
     public void processMessage(User u, String s) {
