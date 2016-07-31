@@ -134,31 +134,24 @@ public class SingleGame {
             Process p = Runtime.getRuntime().exec("python3 /home/bot/python/parse_response.py", null, new File("/home/bot/python"));
             PrintWriter out = new PrintWriter(p.getOutputStream());
             Scanner in = new Scanner(p.getInputStream());
-            log("start processing message");
 
             in.useDelimiter("\t");
 
             out.println(songs.get(currentSong).name + "\t" + (authorSuccess ? 1 : 0) + "\t" + (trackSuccess ? 1 : 0) + "\t" + s + "\n");
             out.flush();
-            log("printing completed");
             boolean author = in.nextInt() == 1;
-            log("first number");
             boolean track = in.nextInt() == 1;
-            log("second number");
             String result = in.next();
-            log("third number");
             String spoiler = in.next();
-            log("scanning completed");
             in.close();
             out.close();
 
             authorSuccess |= author;
             trackSuccess |= track;
 
-            chat.sendMessage(result);
-            chat.sendMessage("Author " + (authorSuccess ? "done" : "not done") + ", track " + (trackSuccess ? "done" : "not done") + ".");
-
-            chat.sendMessage("SPOILER " + spoiler);
+            chat.sendMessage(result + "\n" +
+                    "Author " + (authorSuccess ? "done" : "not done") + ", track " + (trackSuccess ? "done" : "not done") + "." + "\n" +
+                    "SPOILER " + spoiler);
 
 
             if (authorSuccess && trackSuccess)
