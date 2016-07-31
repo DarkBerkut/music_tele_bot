@@ -2,6 +2,14 @@ import fileinput
 import sys
 from common import normalize_name, lev_distance
 from parse_request import try_get_song_from_db
+from transliteration import check
+
+
+# ru_mac = r"йцукенгшщзхъфывапролджэёячсмитьбю"
+# en_mac = r"qwertyuiop[]asdfghjkl;'\zxcvbnm,."
+#
+# ru_pc = r"йцукенгшщзхъфывапролджэячсмитьбю"
+# en_pc = r"qwertyuiopasdfghjklzxcvbnm"
 
 def match(query_parts, target):
     target_parts = target.split()
@@ -10,7 +18,7 @@ def match(query_parts, target):
     for query_part in query_parts:
         if matched == targe_parts_len:
             return True
-        if lev_distance(query_part, target_parts[matched]) <= max(1, len(query_part) / 4):
+        if lev_distance(query_part, target_parts[matched]) <= max(1, len(query_part) / 4) or check(query_part, target_parts[matched]):
             matched += 1
     return matched == targe_parts_len
 
@@ -54,3 +62,4 @@ if __name__ == "__main__":
         spoilers = "{};{} ".format(",".join(track.artists[0].aliases), ",".join(track.track_name_aliases))
 
         print("{}\t{}\t{}\t{}".format(int(artist_correct), int(track_name_correct), reaction, spoilers))
+        sys.stdout.flush()

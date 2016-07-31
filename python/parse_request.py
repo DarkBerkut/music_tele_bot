@@ -1,9 +1,11 @@
 import logging
+import random
 import sys
 
 from pymystem3 import Mystem
 
 from download_media import download_and_cut_song
+import download_media
 
 logging.basicConfig(level=logging.DEBUG, stream=sys.stderr)
 import csv
@@ -33,31 +35,65 @@ tracks_cache = {
 
 def file_to_dict(file):
     type_to_id = {normalize_name(row[1]): row[0] for row in csv.reader(open(file))}
+    id_to_type = {v: k for k, v in type_to_id.items()}
     normalize = {''.join(M.lemmatize(key)).strip():type_to_id[key] for key in type_to_id}
     type_to_id.update(normalize)
-    return type_to_id
+    return type_to_id, id_to_type
 
 
 def get_categories():
     categ_dict = {}
+    id_to_type_full = {}
+    tree_dict = {}
     for file in ['data/style.csv', 'data/theme.csv', 'data/time.csv', 'data/language.csv', 'data/tempo.csv']:
-        categ_dict.update(file_to_dict(file))
-    return categ_dict
+        type_to_id, id_to_type = file_to_dict(file)
+        for cat, id in categ_dict.items():
+            cat_split = cat.split()
+            cur_dict = tree_dict
+            for part in cat_split:
+                if part not in cur_dict:
+                    cur_dict[part] = {}
+                cur_dict = cur_dict[part]
+            cur_dict["$VAL$"] = id
+        categ_dict.update(type_to_id)
+        id_to_type_full.update(id_to_type)
+    return categ_dict, id_to_type_full, tree_dict
 
 
-def get_indexes(input_str, categ_dict):
+def get_indexes(input_str, tree_dict):
     categories = [''.join(M.lemmatize(i)).strip() for i in input_str.split(',')]
     indxs = []
     for category in categories:
-        ind = categ_dict.get(normalize_name(category))
-        if ind:
-            indxs.append(ind)
+        category_split = normalize_name(category).split()
+        previous_step = None
+        cur_step = tree_dict
+        for category_part in category_split:
+            if category_part in cur_step:
+                previous_step = cur_step
+                cur_step = cur_step[category_part]
+            else:
+                if cur_step.get("$VAL$"):
+                    indxs.append(cur_step.get("$VAL$"))
+                    if category_part in tree_dict:
+                        previous_step = None
+                        cur_step = tree_dict
+                if category_part in cur_step:
+                    previous_step = cur_step
+                    cur_step = cur_step[category_part]
+
+        if cur_step.get("$VAL$"):
+            indxs.append(cur_step.get("$VAL$"))
+            previous_step = None
+            cur_step = tree_dict
+        # ind = categ_dict.get(normalize_name(category))
+        # if ind:
+        #     indxs.append(ind)
     return indxs
 
 
 def get_muzis_songs(indxs):
     values = ','.join(['{}:100'.format(i) for i in indxs])
-    data = {'values': values, 'size': 5, 'operator': 'AND'}
+    data = {'values': values, 'size': 10, 'operator': 'AND'}
     r = requests.post(FROM_VALUES_API, data=data)
     return r.json()['songs']
 
@@ -80,7 +116,12 @@ def get_musicbrainz_api_response(name):
 
 
 def generate_normalized_aliases(name, aliases, type):
-    return [normalize_name(name)] + [normalize_name(alias) for alias in aliases]
+    aliases = [normalize_name(name)] + [normalize_name(alias) for alias in aliases]
+    if type == "Person":
+        aliases.extend(
+            [alias.split()[-1] for alias in aliases]
+        )
+    return list(set(aliases))
 
 
 def get_last_fm_api_response(name):
@@ -101,6 +142,8 @@ def make_artist(id, name, photo, related_names):
     logging.debug("Done")
     logging.debug("musicbrainz api: {}:{}".format(id, name))
     type, aliases = get_musicbrainz_api_response(name)
+    if photo:
+        download_media.download_photo(photo)
     logging.debug("done")
     return Artist(id,
                   name,
@@ -110,7 +153,7 @@ def make_artist(id, name, photo, related_names):
 
 
 def get_similar_artists(artist_id):
-    logging.debug("Similar query")
+    logging.debug("Similar query: {}".format(artist_id))
     r = requests.post(SONGS_BY_PERFORMER,
                       data={"performer_id": artist_id,
                             'size': SIMILAR_ARTISTS_DEFAULT_SIZE}
@@ -125,6 +168,7 @@ def get_similar_artists(artist_id):
                 break
         if not song_with_artist_info:
             logging.error("PERFORMER NOT FOUND FOR {}".format(artist_id))
+            return None
     except:
         return None
     return make_artist(song_with_artist_info['performer_id'], song_with_artist_info['performer'],
@@ -235,8 +279,13 @@ def put_track_to_db(track):
 def main():
     # global input_str, file_to_dict, categ_dict, indxs, songs, result, song, track, i
     input_str = input()
-    categ_dict = get_categories()
-    indxs = get_indexes(input_str, categ_dict)
+    categ_dict, id_to_type_dict, tree_dict = get_categories()
+    indxs = list(set(get_indexes(input_str, tree_dict)))
+    if indxs:
+        print("OK\tСоздаю игру по следующему набору тем: {}".format(", ".join([id_to_type_dict[i] for i in indxs])))
+    else:
+        print("UNK\t{}".format("Я не смог понять тему игры. Попробуйте следующие варианты темы: «start русский рок», «start американский хип-хоп 80-х» "))
+        return
     songs = get_muzis_songs(indxs)
     result = []
     logging.debug("Loaded songs: {}".format([song['id'] for song in songs]))
@@ -246,7 +295,8 @@ def main():
             logging.error("couldn't make a song {}".format(song['id']))
         else:
             result.append(track)
-    result = '\n'.join(["{}\t{}".format(track.id, track.track_filename) for track in result])
+    random.shuffle(result)
+    result = '\n'.join(["{}\t{}".format(track.id, track.track_filename) for track in result[:5]])
     print(result)
 
 
