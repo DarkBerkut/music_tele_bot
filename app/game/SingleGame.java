@@ -107,13 +107,13 @@ public class SingleGame {
     }
 
     private void showImageHint() {
-        if (imageHint != null) {
+        if (imageHint != null && !authorSuccess) {
             chat.sendImage("/home/bot/python/data/photo/" + imageHint);
         }
     }
 
     private void showSongsHint() {
-        if (songsHint != null) {
+        if (songsHint != null && !authorSuccess) {
             chat.sendMessage(songsHint);
         }
 
