@@ -15,7 +15,6 @@ class ChatImpl(chatId: Long, controller: Controller, api: TelegramApi) extends C
   }
 
   override def finishGame(): Future[Unit] = Future.successful {
-    System.err.println("finishing game in ChatImpl")
     controller.finishGame(chatId)
   }
 }
