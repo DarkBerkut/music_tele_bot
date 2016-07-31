@@ -16,15 +16,15 @@ class Controller(api: TelegramApi) {
       case Some(game) =>
         game.processMessage(user, text)
       case None =>
-        if (text == "start") {
-          startGame(chatId)
+        if (text.startsWith("start")) {
+          startGame(chatId, text.substring(6))
         }
     }
     Future.successful(())
   }
 
-  def startGame(chatId: Long) {
-    games.put(chatId, new SingleGame(new ChatImpl(chatId, this, api)))
+  def startGame(chatId: Long, cats: String) {
+    games.put(chatId, new SingleGame(new ChatImpl(chatId, this, api), cats))
   }
 
   def finishGame(chatId: Long) {

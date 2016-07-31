@@ -20,12 +20,12 @@ public class SingleGame {
     private int currentSong;
     private Timer gameTimer;
 
-    public SingleGame(Chat chat) {
+    public SingleGame(Chat chat, String cats) {
         this.chat = chat;
         this.gameTimer = new Timer();
         this.results = new HashMap<>();
 
-        startGame();
+        startGame(cats);
 
     }
 
@@ -79,12 +79,12 @@ public class SingleGame {
         chat.sendMessage(resultsToPrint);
     }
 
-    private void startGame() {
+    private void startGame(String cats) {
         currentSong = 0;
         inQuestion = false;
 
         chat.sendMessage("Preparing the game, please wait...");
-        songs = generateSongs();
+        songs = generateSongs(cats);
         chat.sendMessage("Songs prepared! The game will begin soon.");
         scheduleStartQuestion();
     }
@@ -95,7 +95,7 @@ public class SingleGame {
         chat.finishGame();
     }
 
-    private ArrayList<MusicFile> generateSongs() {
+    private ArrayList<MusicFile> generateSongs(String cats) {
         ArrayList<MusicFile> result = new ArrayList<>();
         String spoiler = "";
 
