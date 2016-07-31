@@ -101,6 +101,9 @@ public class SingleGame {
 
         try {
             Process p = Runtime.getRuntime().exec("python3 /home/bot/python/parse_request.py", null, new File("/home/bot/python"));
+            PrintWriter out = new PrintWriter(p.getOutputStream());
+            out.println("русский");
+            out.close();
             Scanner s = new Scanner(p.getInputStream());
             for (int i = 0; i < 5; i++) {
                 result.add(new MusicFile(s.next(), s.next()));
