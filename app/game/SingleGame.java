@@ -84,6 +84,9 @@ public class SingleGame {
 
         chat.sendMessage("Игра загружается, осталось совсем немного...");
         songs = generateSongs(cats);
+        if (songs == null) {
+            return;
+        }
         chat.sendMessage("Игра готова!");
         scheduleStartQuestion();
     }
@@ -104,6 +107,13 @@ public class SingleGame {
             out.println(cats);
             out.flush();
             Scanner s = new Scanner(p.getInputStream());
+            String status = s.next();
+            String comment = s.nextLine();
+            if (status.equals("UNK")) {
+                chat.sendMessage(comment);
+                return null;
+            }
+            chat.sendMessage(comment);
             for (int i = 0; i < 5; i++) {
                 result.add(new MusicFile(s.next(), s.next()));
                 spoiler = spoiler + result.get(result.size() - 1).toString() + "\n";
