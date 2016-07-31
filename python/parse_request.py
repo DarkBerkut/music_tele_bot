@@ -46,7 +46,7 @@ def get_categories():
 
 
 def get_indexes(input_str, categ_dict):
-    categories = [normalize_name(i) for i in input_str.split(',')]
+    categories = [M.lemmatize(normalize_name(i)) for i in input_str.split(',')]
     indxs = []
     for category in categories:
         ind = categ_dict.get(normalize_name(category))
