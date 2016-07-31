@@ -33,6 +33,7 @@ class Controller(api: TelegramApi) {
   def finishGame(chatId: Long) {
     System.err.println("finishing game in Controller");
     games.remove(chatId)
+    System.err.println(games.containsKey(chatId))
   }
 
 }
