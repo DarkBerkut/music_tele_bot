@@ -284,12 +284,22 @@ def main():
     # global input_str, file_to_dict, categ_dict, indxs, songs, result, song, track, i
     input_str = input()
     if input_str == "demo":
-        songs = [1521, 19386, 35413]
+        songs = [{'id': 1521, 'performers': [6307], "file_mp3": "0ny6b0atnkmh.mp3",
+                  "track_name": "Кукушка"},
+                 {'id': 19386,
+                  "file_mp3" : "f4cvaybo03pw.mp3",
+                  "track_name" : "Пять причин",
+                  'performers': [5690]},
+                 {'id': 35413,
+                  "file_mp3" : "qai6pto6wphm.mp3",
+                  "track_name" : "Rap god",
+                  'performers' :[12407]
+                 }]
         print("OK\tСоздаю демо игру")
     else:
-        # 35413 эминем рэп гад
-        # 19386 никалаев/выпьем за любовь/пять причин
         # 1521 кукушка кино
+        # 19386 никалаев/выпьем за любовь/пять причин
+        # 35413 эминем рэп гад
         categ_dict, id_to_type_dict, tree_dict = get_categories()
         indxs = list(set(get_indexes(input_str, tree_dict)))
         if indxs:
@@ -299,7 +309,7 @@ def main():
             print("UNK\t{}".format("Я не смог понять тему игры. Попробуйте следующие варианты темы: «start русский рок», «start американский хип-хоп 80-х»"))
             sys.stdout.flush()
             return
-    songs = get_muzis_songs(indxs)
+        songs = get_muzis_songs(indxs)
     result = []
     logging.debug("Loaded songs: {}".format([song['id'] for song in songs]))
     for song in songs:
