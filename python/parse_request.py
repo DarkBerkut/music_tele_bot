@@ -287,8 +287,10 @@ def main():
     indxs = list(set(get_indexes(input_str, tree_dict)))
     if indxs:
         print("OK\tСоздаю игру по следующему набору тем: {}".format(", ".join([id_to_type_dict[i] for i in indxs])))
+        sys.stdout.flush()
     else:
-        print("UNK\t{}".format("Я не смог понять тему игры. Попробуйте следующие варианты темы: «start русский рок», «start американский хип-хоп 80-х» "))
+        print("UNK\t{}".format("Я не смог понять тему игры. Попробуйте следующие варианты темы: «start русский рок», «start американский хип-хоп 80-х»"))
+        sys.stdout.flush()
         return
     songs = get_muzis_songs(indxs)
     result = []
