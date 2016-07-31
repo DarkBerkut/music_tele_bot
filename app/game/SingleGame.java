@@ -167,7 +167,7 @@ public class SingleGame {
             authorSuccess |= author;
             trackSuccess |= track;
 
-            chat.sendMessage(u.firstName + " " + (score > 0 ? "+" : "") + score +  (score >= 0 ? "очков" : "очка") + "\n" +
+            chat.sendMessage(u.firstName + " " + (score > 0 ? "+" : "") + score +  (score >= 0 ? " очков" : " очка") + "\n" +
                     result + "\n" +
                     "Автор " + (authorSuccess ? "отгадан" : "не отгадан") + ", название " + (trackSuccess ? "отгадано" : "не отгадано") + "." + "\n" +
                     "SPOILER " + spoiler);
