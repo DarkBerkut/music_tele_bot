@@ -136,7 +136,7 @@ public class SingleGame {
             Scanner in = new Scanner(p.getInputStream());
             log("start processing message");
 
-            out.println(songs.get(currentSong).name + "\t" + (authorSuccess ? 1 : 0) + "\t" + (trackSuccess ? 1 : 0) + "\t" + s);
+            out.println(songs.get(currentSong).name + "\t" + (authorSuccess ? 1 : 0) + "\t" + (trackSuccess ? 1 : 0) + "\t" + s + "\n");
             out.flush();
             log("printing completed");
             boolean author = in.nextInt() == 1;
