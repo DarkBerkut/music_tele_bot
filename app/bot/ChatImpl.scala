@@ -14,6 +14,9 @@ class ChatImpl(chatId: Long, controller: Controller, api: TelegramApi) extends C
     api.sendMusic(chatId, filePath, title)
   }
 
+  override def sendImage(filePath: String): Future[Unit] = {
+    api.sendImage(chatId, filePath)
+  }
   override def finishGame(): Future[Unit] = Future.successful {
     controller.finishGame(chatId)
   }

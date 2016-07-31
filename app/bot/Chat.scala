@@ -7,5 +7,7 @@ trait Chat {
 
   def sendMusic(filePath: String, title : String): Future[Unit]
 
+  def sendImage(filePath: String): Future[Unit]
+
   def finishGame(): Future[Unit]
 }

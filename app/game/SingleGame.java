@@ -19,10 +19,14 @@ public class SingleGame {
     private ArrayList<MusicFile> songs;
     private int currentSong;
     private Timer gameTimer;
+    private Timer hintTimer;
+    String imageHint;
+    String songsHint;
 
     public SingleGame(Chat chat, String cats) throws GameNotStartedException {
         this.chat = chat;
         this.gameTimer = new Timer();
+        this.hintTimer = new Timer();
         this.results = new HashMap<>();
 
         startGame(cats);
@@ -30,6 +34,9 @@ public class SingleGame {
     }
 
     private void scheduleStartQuestion() {
+        hintTimer.cancel();
+        hintTimer = new Timer();
+
         gameTimer.cancel();
         gameTimer = new Timer();
         gameTimer.schedule(new TimerTask() {
@@ -47,6 +54,8 @@ public class SingleGame {
         inQuestion = true;
         authorSuccess = false;
         trackSuccess = false;
+        imageHint = null;
+        songsHint = null;
 
         gameTimer.cancel();
         gameTimer = new Timer();
@@ -56,6 +65,60 @@ public class SingleGame {
                 finishQuestion();
             }
         }, 60 * 1000);
+
+        hintTimer.cancel();
+        hintTimer = new Timer();
+        hintTimer.schedule(new TimerTask() {
+
+            @Override
+            public void run() {
+                showSongsHint();
+            }
+        }, 30 * 1000);
+        loadHints();
+    }
+
+    private void loadHints() {
+        try {
+            Process p = Runtime.getRuntime().exec("python3 /home/bot/python/show_hint.py", null, new File("/home/bot/python"));
+            Scanner in = new Scanner(p.getInputStream());
+            PrintWriter out = new PrintWriter(p.getOutputStream());
+
+            out.println(songs.get(currentSong).name + "\n");
+
+            in.useDelimiter("\t\n");
+            while (in.hasNext()) {
+                String type = in.next();
+                String content = in.next();
+
+                if (type.equals("IMG")) {
+                    imageHint = content;
+                }
+
+                if (type.equals("TEXT"))
+                    songsHint = content;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void showImageHint() {
+        if (imageHint != null) {
+            chat.sendImage("/home/bot/python/data/photo/" + imageHint);
+        }
+    }
+
+    private void showSongsHint() {
+        if (songsHint != null) {
+            chat.sendMessage(songsHint);
+        }
+        hintTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                showImageHint();
+            }
+        }, 15 * 1000);
     }
 
     private void finishQuestion() {

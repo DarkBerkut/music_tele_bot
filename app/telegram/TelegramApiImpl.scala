@@ -2,7 +2,7 @@ package telegram
 import java.io.File
 
 import info.mukel.telegrambot4s.api.TelegramApiAkka
-import info.mukel.telegrambot4s.methods.{SendAudio, SendMessage}
+import info.mukel.telegrambot4s.methods.{SendAudio, SendMessage, SendPhoto}
 import info.mukel.telegrambot4s.models.InputFile.FromFile
 import play.api.Logger
 
@@ -18,6 +18,12 @@ class TelegramApiImpl(api: TelegramApiAkka)(implicit ec: ExecutionContext) exten
   override def sendMusic(chatId: Long, filepath: String, title : String): Future[Unit] = {
     api.request(SendAudio(Left(chatId), Left(FromFile(new File(filepath))), title = Option(title))).map {
       m => Logger.info(s"Got response for $chatId, audio: $filepath. $m")
+    }
+  }
+
+  override def sendImage(chatId: Long, filepath: String): Future[Unit] = {
+    api.request(SendPhoto(Left(chatId), Left(FromFile(new File(filepath))))).map {
+      m => Logger.info(s"Got response for $chatId, photo: $filepath. $m")
     }
   }
 }
