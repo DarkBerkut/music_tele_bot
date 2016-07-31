@@ -80,17 +80,18 @@ public class SingleGame {
 
     private void loadHints() {
         try {
+            System.err.println("Trying to load hints");
             Process p = Runtime.getRuntime().exec("python3 /home/bot/python/show_hint.py", null, new File("/home/bot/python"));
             Scanner in = new Scanner(p.getInputStream());
             PrintWriter out = new PrintWriter(p.getOutputStream());
 
             out.println(songs.get(currentSong).name + "\n");
-
+            out.flush();
             in.useDelimiter("\t\n");
             while (in.hasNext()) {
                 String type = in.next();
                 String content = in.next();
-
+                System.err.println(type + " " + content + " LOADED");
                 if (type.equals("IMG")) {
                     imageHint = content;
                 }
@@ -98,6 +99,7 @@ public class SingleGame {
                 if (type.equals("TEXT"))
                     songsHint = content;
             }
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -134,7 +136,7 @@ public class SingleGame {
     }
 
     private void printResults() {
-        String resultsToPrint = "Текущие реультаты\n";
+        String resultsToPrint = "Текущие результаты\n";
         for (User u : results.keySet()) {
             resultsToPrint = resultsToPrint + u.firstName + " " + results.get(u) + "\n";
         }
