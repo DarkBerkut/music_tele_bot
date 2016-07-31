@@ -116,6 +116,10 @@ public class SingleGame {
         if (songsHint != null) {
             chat.sendMessage(songsHint);
         }
+
+        hintTimer.cancel();
+        hintTimer = new Timer();
+
         hintTimer.schedule(new TimerTask() {
             @Override
             public void run() {
