@@ -29,8 +29,8 @@ class Controller(api: TelegramApi) {
     System.err.println("game started");
     try {
       games.put(chatId, new SingleGame(new ChatImpl(chatId, this, api), cats))
-    } catch (GameNotStartedException e) {
-
+    } catch {
+      case e: GameNotStartedException => {}
     }
   }
 

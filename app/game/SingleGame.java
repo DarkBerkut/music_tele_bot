@@ -20,7 +20,7 @@ public class SingleGame {
     private int currentSong;
     private Timer gameTimer;
 
-    public SingleGame(Chat chat, String cats) {
+    public SingleGame(Chat chat, String cats) throws GameNotStartedException {
         this.chat = chat;
         this.gameTimer = new Timer();
         this.results = new HashMap<>();
@@ -78,7 +78,7 @@ public class SingleGame {
         chat.sendMessage(resultsToPrint);
     }
 
-    private void startGame(String cats) {
+    private void startGame(String cats) throws GameNotStartedException {
         currentSong = 0;
         inQuestion = false;
 
