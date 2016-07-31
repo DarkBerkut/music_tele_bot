@@ -11,6 +11,7 @@ for query in sys.stdin:
     track = try_get_song_from_db(track_id)
     if not track:
         print("TEXT\tЯ ничего не знаю про этот трек")
+        exit()
     if track.artists[0].photo:
         print("IMG\t" + track.artists[0].photo)
     if track.artists[0].best_tracks:
@@ -18,3 +19,4 @@ for query in sys.stdin:
         print("TEXT\t{}".format("Самые известные треки данного исполнителя: {}".format(", ".join(best_tracks))))
     if not track.artists[0].photo and not track.artists[0].best_tracks:
         print("TEXT\tУ меня нет подсказок про данного артиста")
+    print("ANS\tОтвет: {} – «{}»".format(track.artists[0].name, track.track_name))
