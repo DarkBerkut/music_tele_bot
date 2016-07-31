@@ -134,6 +134,7 @@ public class SingleGame {
             Process p = Runtime.getRuntime().exec("python3 /home/bot/python/parse_response.py", null, new File("/home/bot/python"));
             PrintWriter out = new PrintWriter(p.getOutputStream());
             Scanner in = new Scanner(p.getInputStream());
+            log("start processing message");
 
             in.useDelimiter("\t");
 
