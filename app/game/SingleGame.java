@@ -102,8 +102,8 @@ public class SingleGame {
         try {
             Process p = Runtime.getRuntime().exec("python3 /home/bot/python/parse_request.py", null, new File("/home/bot/python"));
             PrintWriter out = new PrintWriter(p.getOutputStream());
-            out.println("русский\n");
-            out.close();
+            out.println("русский");
+            out.flush();
             Scanner s = new Scanner(p.getInputStream());
             for (int i = 0; i < 5; i++) {
                 result.add(new MusicFile(s.next(), s.next()));
@@ -112,6 +112,8 @@ public class SingleGame {
                     break;
                 }
             }
+            out.close();
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -135,7 +137,7 @@ public class SingleGame {
 
             in.useDelimiter("\t");
 
-            out.print(songs.get(currentSong).name + "\t" + (authorSuccess ? 1 : 0) + "\t" + (trackSuccess ? 1 : 0) + "\t" + s + "\t");
+            out.print(songs.get(currentSong).name + "\t" + (authorSuccess ? 1 : 0) + "\t" + (trackSuccess ? 1 : 0) + "\t" + s + "\n");
             out.flush();
             log("printing completed");
             boolean author = in.nextInt() == 1;
